@@ -20,6 +20,8 @@ class Assignment:
             raise ValueError("The value is not in the variable's domain")
         self._vals[var] = val
 
+    __setitem__ = assign
+
     def unassign(self, var: variable.Variable) -> None:
         self._vals.pop(var, None)
 
@@ -34,3 +36,9 @@ class Assignment:
         
     def __eq__(self, other: "Assignment") -> bool:
         return self._vals == other._vals
+    
+    def __len__(self) -> int:
+        return len(self._vals)
+    
+    def __bool__(self) -> bool:
+        return bool(self._vals)
