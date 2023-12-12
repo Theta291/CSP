@@ -126,7 +126,7 @@ class DiscreteRelation(Relation):
         return self.satisfying_assignments()
 
     def satisfying_assignments(self, given_space: Optional["_space_type"] = None) -> Iterator[assignment.Assignment]:
-        # If you and together a bunch of relations, this can be used as a brute force solver
+        # If you & together a bunch of relations, this can be used as a brute force solver
         if given_space is None:
             given_space = self._space_type()
         return (assign for assign in given_space[self._variables] if self.satisfied(assign))
