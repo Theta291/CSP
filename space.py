@@ -31,7 +31,7 @@ class Space:
             return self.__class__({v: self[v] for v in var})
         
     def __iter__(self):
-        raise TypeError("Object not iterable")
+        raise TypeError("Space not iterable")
 
     def __setitem__(self, var: variable.Variable, dom: _domain_type):
         self._domains[var] = var.domain & dom

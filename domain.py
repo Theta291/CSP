@@ -30,7 +30,7 @@ class Domain:
     
     def copy(self) -> "Domain":
         raise NotImplementedError
-    
+
 
 class UniverseDomain(Domain, metaclass=Singleton):
     def __contains__(self, val) -> bool:
@@ -136,6 +136,9 @@ class DiscreteDomain(Domain):
     def __iter__(self) -> Iterator:
         yield from self.elements
 
+    def __len__(self) -> int:
+        return len(self.elements)
+
 
 class SingletonDomain(Domain):
     def __init__(self, elt):
@@ -182,3 +185,6 @@ class SingletonDomain(Domain):
     
     def __iter__(self) -> Iterator:
         yield self.element
+
+    def __len__(self) -> int:
+        return 1

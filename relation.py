@@ -73,7 +73,7 @@ class Relation:
         raise NotImplementedError
 
     @classmethod
-    def pruned_space_for_all(cls, relations: Iterable["Relation"]) -> _space_type:
+    def pruned_space_for_all(cls, relations: Iterable["Relation"], current_space: space.Space = None, updated_variable: variable.Variable = None) -> _space_type:
         """
         Inspired by AC3
         Same basic concept:
@@ -86,16 +86,16 @@ class Relation:
 
         # Setup
         all_vars = set(itertools.chain.from_iterable(relation._variables for relation in relations))
-        ret_space = cls._space_type(all_vars)
+        ret_space = cls._space_type(all_vars) if current_space is None else current_space
 
-        # TODO: maybe put something to not recreate this is set of constraints remains the same?
+        # TODO: maybe put something to not recreate this if set of constraints remains the same?
         relations_by_var = {var: [] for var in all_vars}
         for relation in relations:
             for var in relation._variables:
                 relations_by_var[var].append(relation)
 
         # Main loop
-        remaining = set(relations)
+        remaining = set(relations) if updated_variable is None else set(relations_by_var[updated_variable])
         while remaining:
             for curr in remaining:
                 break
@@ -126,7 +126,7 @@ class DiscreteRelation(Relation):
         return self.satisfying_assignments()
 
     def satisfying_assignments(self, given_space: Optional["_space_type"] = None) -> Iterator[assignment.Assignment]:
-        # If you and together a bunch of relations, this can be used as a brute force solver
+        # If you & together a bunch of relations, this can be used as a brute force solver
         if given_space is None:
             given_space = self._space_type()
         return (assign for assign in given_space[self._variables] if self.satisfied(assign))
@@ -168,6 +168,12 @@ if __name__ == "__main__":
     pruned_space = DiscreteRelation.pruned_space_for_all([r_x, r_xy, r_yz])
     print("Pruned space:")
     for var, dom in pruned_space._domains.items():
+        print(var, dom.elements)
+
+    input_space = space.Space.from_assignment(assignment.Assignment({y_var: 7}))
+    pruned_space_2 = DiscreteRelation.pruned_space_for_all([r_x, r_xy, r_yz], current_space=input_space, updated_variable=y_var)
+    print("Pruned space after assignment:")
+    for var, dom in pruned_space_2._domains.items():
         print(var, dom.elements)
 
     r_total = r_x & r_xy & r_yz
